@@ -2,11 +2,12 @@
 
 const mockData = require('./mockData')
 
-const Hapi = require('hapi');
+const Hapi = require('hapi')
 const Boom = require('boom')
+const Joi = require('joi')
 
-const server = new Hapi.Server();
-server.connection({ port: 3000, host: 'localhost' });
+const server = new Hapi.Server()
+server.connection({ port: 3000, host: 'localhost' })
 
 server.route({
   method: 'GET',
@@ -28,7 +29,23 @@ server.route({
 
 server.route({
   method: 'GET',
-  path: '/{name}',
+  path: '/valid/{test}',
+  handler: function (request, reply) {
+    // Check {test} param is between 3 and 10 characters or 400
+    reply('Valid Test')
+  },
+  config: {
+    validate: {
+      params: {
+        test: Joi.string().min(3).max(10)
+      }
+    }
+  }
+})
+
+server.route({
+  method: 'GET',
+  path: '/name/{name}',
   handler: function (request, reply) {
     // Filter data based on route
     const result = mockData.filter(
