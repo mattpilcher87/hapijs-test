@@ -12,6 +12,7 @@ server.route({
   method: 'GET',
   path: '/',
   handler: function (request, reply) {
+    // Filter data based on query
     const result = mockData.filter(
       object => object.name === request.query.name
     )
@@ -29,13 +30,17 @@ server.route({
   method: 'GET',
   path: '/{name}',
   handler: function (request, reply) {
-    var data = {
-      id: 1,
-      name: 'matt',
-      role: 'dev'
-    }
+    // Filter data based on route
+    const result = mockData.filter(
+      object => object.name === request.params.name
+    )
 
-    reply(data)
+    if(result.length < 1) {
+      reply(Boom.notFound('Person does not exist'))
+    }
+    else {
+      reply('Hello, ' + encodeURIComponent(request.params.name))
+    }
   }
 });
 
